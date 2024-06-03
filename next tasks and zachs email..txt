@@ -1,0 +1,49 @@
+Good Afternoon Shazeb and Raghu, 
+
+I’ve compiled our recent discussions into some tickets and priority lists for you guys for the next couple of weeks. To start with, I’ve taken the diagram from https://confluence.rsi.lexisnexis.com/pages/viewpage.action?pageId=348915584 and built 2 tickets from it and adapted a third for overall tracking. Specifically they are: 
+
+TDP-247              Infrastructure & Support - DevOps Pipeline First Pass (What Shazeb has already been working on)
+TDP-318              Infrastructure & Support - DevOps Pipeline Second Pass (Meat of this email)
+TDP-327              Infrastructure & Support - DevOps Pipeline Extra Features (Late Q3/Q4 Tasks most likely)
+
+TDP-247 I think we are wrapping up with Shazeb working on the last piece which is the databricks deploy. There is one more ticket for unit tests that Raghu had (TDP-255) but that ticket I’ve folded into another one. Without further ado here is the breakdown of tickets ranked by priority: 
+
+Shazeb: 
+1.	TDP-254 (Databricks Deployment)
+2.	TDP-320 – Merge Deploy to just App Service
+3.	TDP-321 – Merge Deploy to just Databricks 
+
+Raghu:
+1.	TDP-256 (CosmoDB Provisioned Rate, wrapping up)
+2.	TDP-319 – Merge Deploy Refactor
+3.	TDP-323 – Unit Test Reports
+4.	TDP-322 – Auto PR Check
+
+We can move tickets around as well if we need to but this is the initial plan. There are three tickets that we have floating out that have to deal with promotion to nonprod/prod that I think we should talk about when designing the deploys, Specifically knowing which artifact from JFROG to grab and which resource it should send the jar to (dev/nonprod/prod etc) This is probably something where nonprod gets snapshots while prod gets release versions. Anyway for your records those tickets are TDP-257(I think this has turned into check if a feature branch PR passes all the tests), TDP-258(Check if a release branch passes it’s tests) and TDP-259 (Release to prod).
+
+More Tickets will come but any questions let me know
+ZACH.
+
+
+
+
+Union PlatformTDP-320
+Infrastructure & Support - Merge Deploy App Service
+
+Description
+Based on the confluence page, we need to create a deploy that will deploy out to the app service from a jar file found in the JFROG repository. Some items to keep track off:
+
+Needs to deploy to either dev/non prod/prod
+Needs to know which version of the jar file to deploy where
+If we need to we can have multiple versions of the deploy but that can be figured out as development goes along. 
+
+
+Union PlatformTDP-321
+Infrastructure & Support - Merge Deploy Databricks
+
+Description
+Based on the confluence page, we need to create a deploy that will deploy out to the datalake from a jar file found in the JFROG repository. Some items to keep track off:
+
+Needs to deploy to either dev/non prod/prod
+Needs to know which version of the jar file to deploy where
+If we need to we can have multiple versions of the deploy but that can be figured out as development goes along. 
