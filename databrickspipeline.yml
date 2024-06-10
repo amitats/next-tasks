@@ -1,0 +1,88 @@
+name: Build with Maven
+
+env:
+  JAVA_VERSION: '17'
+  AZURE_WEBAPP_NAME: d2phashdev
+
+on:
+  push:
+    branches: 
+      - TDP-254-draft
+      - main
+  pull_request:
+    branches:
+      - TDP-254-draft
+      - main
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+  
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up JDK 17
+      uses: actions/setup-java@v3
+      with:
+        java-version: ${{ env.JAVA_VERSION }}
+        distribution: 'temurin'
+        cache: maven
+  
+    - name: Sets up jfrog-cli with Artifactory secret
+      uses: jfrog/setup-jfrog-cli@v3
+      env:
+        JF_URL: ${{ secrets.JFROG_URL }}
+        JF_USER: ${{ secrets.JF_USER }}
+        JF_ACCESS_TOKEN: ${{ secrets.JF_ACCESS_TOKEN }}
+  
+    - name: Build and deploy with Maven.
+      run: mvn clean install deploy -s $GITHUB_WORKSPACE/settings.xml -U -Djfrog.username=${{ secrets.JF_USER }} -Djfrog.token=${{ secrets.JF_ACCESS_TOKEN }} -DskipTests    
+       
+    - name: Upload a Build Artifact
+      uses: actions/upload-artifact@v3.1.3
+      with:
+          name: java-app
+          path: '${{ github.workspace }}/target/*.jar'  
+
+    - name: Install specific versions of urllib3 and chardet
+      run: |
+        pip install urllib3==1.26.14 chardet==3.0.4  
+      
+    - name: Verify installed versions
+      run: |
+        pip show urllib3 chardet requests      
+     
+    - name: Install Databricks CLI
+      run: |
+        pip install databricks-cli      
+
+    - name: Upload artifact JAR to Databricks
+      run: |
+        export DATABRICKS_HOST="${{ secrets.DATABRICKS_HOST }}"
+        export DATABRICKS_TOKEN="${{ secrets.DATABRICKS_TOKEN }}"
+        export DATABRICKS_CLUSTER_ID="${{ secrets.DATABRICKS_CLUSTER_ID }}"
+        export DATABRICKS_PATH="dbfs:/FileStore/jars/"
+        for file in ${{ github.workspace }}/target/*.jar; do
+          databricks fs cp "$file" dbfs:/FileStore/jars/
+        done
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    environment:
+      name: 'dev'
+      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+
+    steps:
+      - name: Download artifact from build job
+        uses: actions/download-artifact@v3
+        with:
+          name: java-app
+
+      - name: Deploy to Azure Web App
+        id: deploy-to-webapp
+        uses: azure/webapps-deploy@85270a1854658d167ab239bce43949edb336fa7c
+        with:
+          app-name: ${{ env.AZURE_WEBAPP_NAME }}
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }} #update new secret for every new appservice
+          package: 'test_project-1.0.1-SNAPSHOT.jar'  
+      
