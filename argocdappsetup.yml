@@ -1,0 +1,101 @@
+name: AKS ArgoCD Deployment
+run-name: ${{ inputs.subscription }}-${{ inputs.cluster }} deployment for ${{ inputs.app_name }}:${{ inputs.image_version }}
+on:
+  workflow_dispatch:
+    inputs:
+      subscription:
+        type: choice
+        description: Select Data Vault subscription
+        options:
+        - dev
+        - nonprod
+        - prod
+        default: dev
+      cluster:
+        type: choice
+        description: Select AKS Cluster in subscription
+        options:
+        - "1"
+        - "2"
+        default: "1"
+      chart_branch:
+        description: Helm Chart Repo Branch
+        default: main
+        required: true
+      app_name:
+        description: Enter the app name (i.e., values file; e.g., dv-logger)
+        type: choice
+        options:
+          - dv-allyservice
+          - dv-batchclean
+          - dv-batchclean-ipd
+          - dv-ccpservice
+          - dv-filecatalog
+          - dv-ingest-job
+          - dv-ingestpreproc
+          - dv-ingestprocess
+          - dv-ipdservice
+          - dv-kelindexbuild
+          - dv-kelindexbuild-ipd
+          - dv-largeingestprocess
+          - dv-lenticmanager
+          - dv-logger
+          - dv-logviewer
+          - dv-luci
+          - dv-monitor
+          - dv-orchestrator
+          - dv-vault-index-manager
+        required: true
+      app_suffix:
+        description: Enter an app suffix if desired (for testing alternate versions; e.g., "-v2")
+        default: ""
+        required: false
+      image_version:
+        description: Enter the JFrog image version
+        default: latest
+        required: true
+
+jobs:
+  create-apps:
+    runs-on: [linux, alpha, US]
+    steps:
+      - name: Input Values Entered
+        run: |
+          echo "Subscription: ${{ inputs.subscription }}"
+          echo "Cluster in subscription: ${{ inputs.cluster }}"
+          echo "Chart Repo Branch: ${{ inputs.chart_branch }}"
+          echo "App name: ${{ inputs.app_name }}"
+          echo "App suffix if desired: ${{ inputs.app_suffix }}"
+          echo "JFrog image version: ${{ inputs.image_version }}"
+
+      - name: Get Hashicorp Vault Secrets
+        uses: hashicorp/vault-action@v2.2.0
+        id: vault
+        with:
+          url: ${{ vars.VAULT_URL }}
+          namespace: ${{ vars.VAULT_NAMESPACE }}
+          roleId: ${{ secrets.VAULT_ROLE_ID }}
+          secretId: ${{ secrets.VAULT_SECRET_ID }}
+          method: approle
+          exportToken: false
+          exportEnv: true
+          secrets: |
+            ${{ inputs.subscription }}/platform/sre/config/aks/data/argocd GHA_SVC_USERNAME | ARGOCD_USERNAME ;
+            ${{ inputs.subscription }}/platform/sre/config/aks/data/argocd GHA_SVC_PASSWORD | ARGOCD_PASSWORD ;
+
+      - name: Log In to ArgoCD
+        run: |
+          curl -sSL -o argocd-linux-amd64 https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64
+          sudo install -m 555 argocd-linux-amd64 /usr/local/bin/argocd
+          rm argocd-linux-amd64
+          argocd login --grpc-web argocd-${{ inputs.cluster }}.us-datavault-${{ inputs.subscription }}.azure.lnrsg.io --username ${{ steps.vault.outputs.ARGOCD_USERNAME }} --password ${{ steps.vault.outputs.ARGOCD_PASSWORD }}
+
+      - name: Create ArgoCD App
+        run: |
+          argocd app create ${{ inputs.app_name }}${{ inputs.app_suffix }}-${{ inputs.cluster }} --upsert --project datavault --repo git@github.com:LexisNexis-RBA/dv-app-helm-charts.git \
+          --revision ${{ inputs.chart_branch }} --path charts/dv-application --values values/${{ inputs.app_name }}.yaml --dest-namespace ${{ inputs.app_name }} \
+          --dest-server https://kubernetes.default.svc -p environment=${{ inputs.subscription }} -p image.version=${{ inputs.image_version }} -p appNameOverride=${{ inputs.app_name }}${{ inputs.app_suffix }}-${{ inputs.cluster }}
+
+      - name: Sync Application
+        run: |
+          argocd app sync ${{ inputs.app_name }}${{ inputs.app_suffix }}-${{ inputs.cluster }}
