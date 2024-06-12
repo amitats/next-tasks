@@ -1,0 +1,331 @@
+Transcript
+June 11, 2024, 7:32PM
+
+Ahmed, Shazeb (RIS-CON) started transcription
+
+Suffern, Zach (RIS-ATL)   0:04
+Let me know as the recording now.
+I think it is.
+Yeah.
+OK, OK.
+
+Ahmed, Shazeb (RIS-CON)   0:07
+It is, yes.
+
+Suffern, Zach (RIS-ATL)   0:09
+So there's two parts to this.
+
+Ahmed, Shazeb (RIS-CON)   0:11
+Umm.
+
+Suffern, Zach (RIS-ATL)   0:11
+The first is compute and I'm going to just clone you actually with this one.
+Uh, no, this is multinode.
+Yeah, we want to. OK.
+No isolation.
+That's going to bring this down to.
+That should be fine.
+So you don't have to do this.
+I'm just doing this to.
+It works deploy.
+Just so you have something to work off of.
+And has secrets, OK.
+So I've made this D2P data bricks deploy station.
+This will be the compute that you'll have acts that you'll want to work off of so we don't interact with anyone else.
+It's pretty cheap.
+It's a single node.
+Umm terminates after 10 minutes, so just be aware of that, but I think it has everything you need.
+
+Ahmed, Shazeb (RIS-CON)   1:28
+And.
+
+Suffern, Zach (RIS-ATL)   1:31
+Just can't right real quick.
+Yeah.
+OK, cool.
+So this is your compute.
+Uh.
+In workflows, I'm going to make a new one based off of this POC task.
+So in order, in order to see this, you'll want to go to all.
+Don't do their own by me.
+Just do all and let me make a new one.
+
+Ahmed, Shazeb (RIS-CON)   1:55
+OK.
+
+Suffern, Zach (RIS-ATL)   1:59
+Ohh.
+I mean make a.
+So I'm gonna put two tasks in here.
+Uh, call this task one.
+It is going to be a jar and I'm just going to copy and paste from he peoc because from the development standpoint all of this doesn't change.
+Our job cluster is gonna point to the deploy station.
+I'm gonna leave this dependent libraries well.
+I guess I have to.
+
+Ahmed, Shazeb (RIS-CON)   2:38
+Umm.
+
+Suffern, Zach (RIS-ATL)   2:38
+I might have to pick something here.
+So this is where it gets tricky and I don't know the correct way to handle this.
+Do you have the file path?
+
+Ahmed, Shazeb (RIS-CON)   2:52
+Yeah. Let me.
+Yeah, I do have it.
+
+Suffern, Zach (RIS-ATL)   2:53
+So I know you.
+
+Ahmed, Shazeb (RIS-CON)   2:57
+Yeah, and see if it's somewhere.
+For the path, what do you say?
+Yes, I'm going to copy that and the chat.
+
+Suffern, Zach (RIS-ATL)   3:10
+Yeah.
+
+Ahmed, Shazeb (RIS-CON)   3:19
+There you go.
+
+Suffern, Zach (RIS-ATL)   3:21
+You have the.
+Do you have a uh?
+Where is one of the front where is the.
+He's on the run time.
+There's a file name in there.
+I think this is the full file name.
+Hold on.
+Let's see here.
+Uh.
+Did did to to to to.
+Remember, you showed me a thing.
+Give me a second.
+I'm trying to find it.
+
+Ahmed, Shazeb (RIS-CON)   4:11
+Uh-huh.
+
+Suffern, Zach (RIS-ATL)   4:25
+Like this is where it was.
+Where is it?
+Trying to find where the name itself is.
+
+Ahmed, Shazeb (RIS-CON)   4:48
+Name.
+Me look as well.
+
+Suffern, Zach (RIS-ATL)   4:56
+Yes, I can try.
+Uh.
+
+Ahmed, Shazeb (RIS-CON)   4:59
+Sweet.
+
+Suffern, Zach (RIS-ATL)   5:15
+Oops, I don't wanna bring them.
+Gonna copy it?
+Let's see if this does anything.
+OK so.
+Great task.
+On app one more task.
+Task 2.
+It's going to.
+Everything else is going to be the same.
+
+Ahmed, Shazeb (RIS-CON)   5:57
+Like.
+
+Suffern, Zach (RIS-ATL)   6:04
+Boy pants on Task one succeeds.
+Add a jar.
+Have file path.
+DBFS. Uh.
+OK.
+OK, OK.
+So I have you set up here.
+
+Ahmed, Shazeb (RIS-CON)   7:18
+Umm.
+
+Suffern, Zach (RIS-ATL)   7:21
+There are two that there is this job, or we'll call this.
+Uh data bricks deployed test OK, so look for this data birth deploy tests.
+There's two tasks.
+They both are going to run from a jar file.
+What you need to do is figure out how we can.
+Update these tasks to point to the newest jar that you've deployed.
+Umm, so that that's what they run.
+I know that.
+There's something like this, I I'm sure.
+I think there's a way from the CLI commands to update this stuff.
+That we're going to figure out, but your end goal is loops.
+Where am I going?
+Sorry, I got mixed up your end goal.
+Is just to run these.
+Now I'm curious, you just what happens if I run this?
+
+Ahmed, Shazeb (RIS-CON)   8:30
+Trigger.
+
+Suffern, Zach (RIS-ATL)   8:32
+Does it?
+Technically this might exist.
+
+Ahmed, Shazeb (RIS-CON)   8:35
+Umm.
+
+Suffern, Zach (RIS-ATL)   8:38
+And I'm very curious to see what happens.
+And these tasks are set up that will one will run first until run.
+Second, they're the same thing.
+So they should, if one works, the other should work.
+
+Ahmed, Shazeb (RIS-CON)   8:51
+Uh-huh.
+
+Suffern, Zach (RIS-ATL)   8:53
+We're not trying to test anything else. Ohm.
+It is up.
+I'm going to libraries.
+Ohh I'd loaded stuff.
+That's good.
+Why did you fail?
+Her son of the *****.
+OK, I'm sorry.
+I didn't mean to curse.
+
+Ahmed, Shazeb (RIS-CON)   9:31
+Message.
+
+Suffern, Zach (RIS-ATL)   9:33
+This is a known bug.
+With the TARDIS code.
+Actually.
+But the good news is I think it actually ran off the library.
+
+Ahmed, Shazeb (RIS-CON)   9:53
+Right.
+Yeah.
+
+Suffern, Zach (RIS-ATL)   10:00
+I wonder what happens if.
+And if I name this something I know doesn't exist.
+I want to change this.
+To like.
+54.
+Now if we change that to five, four, which should not exist, what happens?
+
+Ahmed, Shazeb (RIS-CON)   10:38
+1.
+Also like meant.
+
+Suffern, Zach (RIS-ATL)   10:55
+OK.
+So OK, so it's trying to find it does it, does it find it?
+
+Ahmed, Shazeb (RIS-CON)   10:58
+Umm.
+
+Suffern, Zach (RIS-ATL)   11:08
+I think this was here from the clone.
+I should check that. Umm.
+
+Ahmed, Shazeb (RIS-CON)   11:27
+Many of the task one.
+
+Suffern, Zach (RIS-ATL)   11:28
+OK, so this is this is actually good.
+This is this is good.
+
+Ahmed, Shazeb (RIS-CON)   11:32
+Umm.
+
+Suffern, Zach (RIS-ATL)   11:32
+So we can we so it can go to that DBFS file store.
+And it does have the jar there.
+So what the CLI command needs to do?
+Is it needs to update.
+The workflow.
+
+Ahmed, Shazeb (RIS-CON)   11:59
+Right.
+
+Suffern, Zach (RIS-ATL)   12:00
+To point to the newest the newest jar file that was just updated. Umm.
+And update that name.
+So it needs to go here.
+It needs to change the dependent libraries to point to whatever the newest JAR file is that we just uploaded.
+
+Ahmed, Shazeb (RIS-CON)   12:14
+Mm-hmm.
+
+Suffern, Zach (RIS-ATL)   12:21
+Ohm.
+So that is what we're missing, because if we update this then everything else will be updated properly.
+
+Ahmed, Shazeb (RIS-CON)   12:27
+Right.
+
+Suffern, Zach (RIS-ATL)   12:30
+It looks like is that make sense?
+
+Ahmed, Shazeb (RIS-CON)   12:32
+Yes, yes.
+
+Suffern, Zach (RIS-ATL)   12:34
+OK, so we need to find the.
+Just need to find whatever CLI command is that will update this task and the job ID.
+By the way, is right here on this side.
+
+Ahmed, Shazeb (RIS-CON)   12:44
+Umm.
+
+Suffern, Zach (RIS-ATL)   12:45
+I think it is.
+I don't know how they.
+Well, here's the job idea.
+I'm not sure how they do task ID uh, but I'll let you figure that out and then you just need to update both of them to be the newest jar file.
+
+Ahmed, Shazeb (RIS-CON)   12:57
+Got.
+
+Suffern, Zach (RIS-ATL)   12:59
+So the the flow is upload the jar to data bricks, which you've done.
+
+Ahmed, Shazeb (RIS-CON)   13:05
+Mm-hmm.
+
+Suffern, Zach (RIS-ATL)   13:05
+And then.
+Uh update the workflows to point to that new jar.
+
+Ahmed, Shazeb (RIS-CON)   13:12
+Got it.
+
+Suffern, Zach (RIS-ATL)   13:13
+Any questions?
+
+Ahmed, Shazeb (RIS-CON)   13:14
+No, no, Zach, thanks. Nice.
+
+Suffern, Zach (RIS-ATL)   13:16
+OK.
+So let me know if any issues.
+Here's all the stuff you need if you can't find it, let me know and then let me know when you get something to show OK.
+
+Ahmed, Shazeb (RIS-CON)   13:21
+Sure, sure. Yeah.
+Thank you.
+Thank you.
+Thanks for the explanation.
+
+Suffern, Zach (RIS-ATL)   13:27
+Yep.
+Alright, talk to you later. Bye.
+
+Ahmed, Shazeb (RIS-CON)   13:28
+Thank you. Bye.
+
+Ahmed, Shazeb (RIS-CON) stopped transcription
