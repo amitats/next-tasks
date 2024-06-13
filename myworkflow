@@ -1,0 +1,54 @@
+name: Upload JARs and Update Databricks Workflow
+
+on:
+  push:
+    branches:
+      - main  # Trigger on push to main branch, adjust as needed
+
+jobs:
+  upload-and-update:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Setup Databricks CLI
+      run: |
+        pip install databricks-cli
+        databricks configure --token
+      env:
+        DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
+        DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
+
+    - name: Upload JARs to DBFS
+      run: |
+        # Replace 'jarfile1.jar', 'jarfile2.jar', 'jarfile3.jar' with your actual JAR file names
+        databricks fs cp jarfile1.jar dbfs:/FileStore/jars/jarfile1.jar --overwrite
+        databricks fs cp jarfile2.jar dbfs:/FileStore/jars/jarfile2.jar --overwrite
+        databricks fs cp jarfile3.jar dbfs:/FileStore/jars/jarfile3.jar --overwrite
+
+    - name: Update Databricks Workflow Tasks
+      run: |
+        # Define the job ID
+        JOB_ID="your-job-id"
+
+        # Fetch current job settings
+        JOB_SETTINGS=$(databricks jobs get --job-id $JOB_ID)
+        
+        # Update each task with the corresponding JAR file path
+        UPDATED_JOB_SETTINGS=$(echo $JOB_SETTINGS | jq '
+          .settings.tasks[0].libraries[0].jar = "dbfs:/FileStore/jars/jarfile1.jar" |
+          .settings.tasks[1].libraries[0].jar = "dbfs:/FileStore/jars/jarfile2.jar" |
+          .settings.tasks[2].libraries[0].jar = "dbfs:/FileStore/jars/jarfile3.jar"
+        ')
+        
+        # Update the job with the new settings
+        echo $UPDATED_JOB_SETTINGS | databricks jobs reset --job-id $JOB_ID --json-file -
+
+      env:
+        DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
+        DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
+
+    - name: Notify on success
+      run: echo "JAR files uploaded and Databricks workflow tasks updated successfully."
